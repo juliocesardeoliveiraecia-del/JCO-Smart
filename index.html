@@ -6,51 +6,38 @@
 <title>JCO Smart</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
 body {
+    margin: 0;
+    font-family: Arial;
     background: #0b0f14;
-    color: #fff;
+    color: white;
     display: flex;
 }
 
 /* SIDEBAR */
 .sidebar {
-    width: 240px;
-    height: 100vh;
+    width: 230px;
     background: #11161d;
+    height: 100vh;
     padding: 20px;
-    border-right: 1px solid #1c2430;
 }
 
 .logo {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 30px;
+    font-size: 20px;
+    margin-bottom: 20px;
 }
 
 .logo span {
     color: orange;
 }
 
-.menu {
-    list-style: none;
-}
-
-.menu li {
+.menu div {
     padding: 12px;
-    margin-bottom: 10px;
+    margin: 8px 0;
     cursor: pointer;
-    border-radius: 6px;
-    transition: 0.3s;
 }
 
-.menu li:hover {
+.menu div:hover {
     background: #1c2430;
 }
 
@@ -60,16 +47,7 @@ body {
     padding: 20px;
 }
 
-/* HEADER */
-.header {
-    margin-bottom: 20px;
-}
-
-.header h1 {
-    font-size: 24px;
-}
-
-/* CARDS */
+/* GRID */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -80,213 +58,191 @@ body {
     background: #151b23;
     padding: 15px;
     border-radius: 10px;
-    transition: 0.3s;
 }
 
-.card:hover {
-    transform: scale(1.03);
-}
-
-/* DEVICE */
-.device-name {
-    margin-bottom: 10px;
-}
-
-.toggle {
-    padding: 8px;
-    border-radius: 6px;
+button {
+    width: 100%;
+    padding: 10px;
     border: none;
     cursor: pointer;
-    width: 100%;
-    font-weight: bold;
+    border-radius: 6px;
 }
 
-.on {
-    background: #1ecb7b;
-}
+.on { background: #1ecb7b; }
+.off { background: #ff4d4d; }
 
-.off {
-    background: #ff4d4d;
-}
-
-/* CAMERA */
-.cameras {
-    margin-top: 30px;
-}
-
-.camera-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-}
-
+/* CAMERAS */
 .camera {
     background: #151b23;
     border-radius: 10px;
     overflow: hidden;
-    cursor: pointer;
 }
 
-.camera video, .camera img {
+.camera img {
     width: 100%;
 }
 
-.camera-name {
-    padding: 10px;
+/* MODAL */
+.modal {
+    position: fixed;
+    background: rgba(0,0,0,0.7);
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
 }
 
-/* STATUS */
-.status {
+.modal-content {
     background: #151b23;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    width: 300px;
 }
 
-/* RESPONSIVO */
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="logo">JCO <span>Smart</span></div>
 
-    <ul class="menu">
-        <li onclick="showSection('dashboard')">Dashboard</li>
-        <li onclick="showSection('devices')">Dispositivos</li>
-        <li onclick="showSection('cameras')">Câmeras</li>
-        <li onclick="showSection('automation')">Automações</li>
-    </ul>
+    <div class="menu">
+        <div onclick="show('dashboard')">Dashboard</div>
+        <div onclick="show('devices')">Dispositivos</div>
+        <div onclick="show('cameras')">Câmeras</div>
+        <div onclick="show('settings')">Configurações</div>
+    </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-    <div class="header">
-        <h1>Painel de Controle</h1>
-    </div>
-
-    <!-- STATUS -->
-    <div class="status">
-        <strong>Status:</strong> <span id="statusText">Tudo OK</span>
-    </div>
 
     <!-- DASHBOARD -->
     <div id="dashboard">
-
+        <h2>Dashboard</h2>
         <div class="grid" id="deviceGrid"></div>
-
-        <div class="cameras">
-            <h2>Câmeras</h2>
-
-            <div class="camera-grid">
-                <div class="camera">
-                    <img src="https://placehold.co/400x250/000000/FFFFFF?text=Entrada">
-                    <div class="camera-name">Entrada</div>
-                </div>
-
-                <div class="camera">
-                    <img src="https://placehold.co/400x250/000000/FFFFFF?text=Garagem">
-                    <div class="camera-name">Garagem</div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <!-- DEVICES -->
     <div id="devices" style="display:none;">
         <h2>Dispositivos</h2>
-        <div class="grid" id="allDevices"></div>
+        <button onclick="openModal('device')">+ Adicionar Dispositivo</button>
+        <div class="grid" id="deviceList"></div>
     </div>
 
     <!-- CAMERAS -->
     <div id="cameras" style="display:none;">
         <h2>Câmeras</h2>
-
-        <div class="camera-grid">
-            <div class="camera">
-                <img src="https://placehold.co/400x250/000000/FFFFFF?text=Sala">
-                <div class="camera-name">Sala</div>
-            </div>
-
-            <div class="camera">
-                <img src="https://placehold.co/400x250/000000/FFFFFF?text=Quarto">
-                <div class="camera-name">Quarto</div>
-            </div>
-        </div>
+        <button onclick="openModal('camera')">+ Adicionar Câmera</button>
+        <div class="grid" id="cameraList"></div>
     </div>
 
-    <!-- AUTOMATION -->
-    <div id="automation" style="display:none;">
-        <h2>Automações</h2>
-        <p>Em breve...</p>
+    <!-- SETTINGS -->
+    <div id="settings" style="display:none;">
+        <h2>Configurações</h2>
+        <p>JCO Smart v1.0</p>
     </div>
 
 </div>
 
+<!-- MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <input id="name" placeholder="Nome">
+        <input id="url" placeholder="URL da câmera (opcional)">
+        <button onclick="save()">Salvar</button>
+    </div>
+</div>
+
 <script>
 
-let devices = [
-    { id: 1, name: "Luz Sala", status: true },
-    { id: 2, name: "Tomada TV", status: false },
-    { id: 3, name: "Luz Quarto", status: true },
-    { id: 4, name: "Ventilador", status: false }
-];
+let devices = JSON.parse(localStorage.getItem("devices")) || [];
+let cameras = JSON.parse(localStorage.getItem("cameras")) || [];
 
-function renderDevices() {
+let currentType = "";
+
+function show(section){
+    ["dashboard","devices","cameras","settings"].forEach(s=>{
+        document.getElementById(s).style.display="none";
+    });
+    document.getElementById(section).style.display="block";
+}
+
+function openModal(type){
+    currentType = type;
+    document.getElementById("modal").style.display="flex";
+    document.getElementById("modalTitle").innerText =
+        type === "device" ? "Novo Dispositivo" : "Nova Câmera";
+}
+
+function save(){
+    const name = document.getElementById("name").value;
+    const url = document.getElementById("url").value;
+
+    if(currentType === "device"){
+        devices.push({id: Date.now(), name, status:false});
+        localStorage.setItem("devices", JSON.stringify(devices));
+    } else {
+        cameras.push({id: Date.now(), name, url});
+        localStorage.setItem("cameras", JSON.stringify(cameras));
+    }
+
+    document.getElementById("modal").style.display="none";
+    render();
+}
+
+function toggle(id){
+    let d = devices.find(x=>x.id===id);
+    d.status = !d.status;
+    localStorage.setItem("devices", JSON.stringify(devices));
+    render();
+}
+
+function render(){
+
+    // DASHBOARD
     let grid = document.getElementById("deviceGrid");
-    let all = document.getElementById("allDevices");
-
     grid.innerHTML = "";
-    all.innerHTML = "";
 
-    devices.forEach(device => {
-        let btnClass = device.status ? "on" : "off";
-        let text = device.status ? "ON" : "OFF";
-
-        let card = `
+    devices.forEach(d=>{
+        grid.innerHTML += `
             <div class="card">
-                <div class="device-name">${device.name}</div>
-                <button class="toggle ${btnClass}" onclick="toggleDevice(${device.id})">${text}</button>
+                <h3>${d.name}</h3>
+                <button class="${d.status?'on':'off'}" onclick="toggle(${d.id})">
+                    ${d.status?'ON':'OFF'}
+                </button>
             </div>
         `;
-
-        grid.innerHTML += card;
-        all.innerHTML += card;
     });
 
-    updateStatus();
-}
+    // DEVICES
+    let list = document.getElementById("deviceList");
+    list.innerHTML = grid.innerHTML;
 
-function toggleDevice(id) {
-    let device = devices.find(d => d.id === id);
-    device.status = !device.status;
-    renderDevices();
-}
+    // CAMERAS
+    let camList = document.getElementById("cameraList");
+    camList.innerHTML = "";
 
-function updateStatus() {
-    let active = devices.filter(d => d.status).length;
-    document.getElementById("statusText").innerText =
-        active > 0 ? `${active} dispositivos ativos` : "Tudo desligado";
-}
-
-function showSection(section) {
-    ["dashboard","devices","cameras","automation"].forEach(id => {
-        document.getElementById(id).style.display = "none";
+    cameras.forEach(c=>{
+        camList.innerHTML += `
+            <div class="camera">
+                <img src="${c.url || 'https://placehold.co/400x250'}">
+                <div style="padding:10px">${c.name}</div>
+            </div>
+        `;
     });
 
-    document.getElementById(section).style.display = "block";
 }
 
-renderDevices();
+render();
 
 </script>
 
