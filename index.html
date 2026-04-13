@@ -1,20 +1,294 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JCO Smart - Automação Residencial</title>
-    <style>
-        :root {
-            --bg-primary: #0f0f0f;
-            --bg-secondary: #1a1a1a;
-            --card-bg: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --on-color: #00ff88;
-            --off-color: #ff4444;
-            --border: #404040;
-            --hover: #3a3a3a;
-            --accent-blue: #007BFF;
-        }
-        * { margin: 0; padding: 0;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JCO Smart</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #0b0f14;
+    color: #fff;
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background: #11161d;
+    padding: 20px;
+    border-right: 1px solid #1c2430;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.logo span {
+    color: orange;
+}
+
+.menu {
+    list-style: none;
+}
+
+.menu li {
+    padding: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.menu li:hover {
+    background: #1c2430;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+/* HEADER */
+.header {
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+}
+
+/* CARDS */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: #151b23;
+    padding: 15px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+/* DEVICE */
+.device-name {
+    margin-bottom: 10px;
+}
+
+.toggle {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+}
+
+.on {
+    background: #1ecb7b;
+}
+
+.off {
+    background: #ff4d4d;
+}
+
+/* CAMERA */
+.cameras {
+    margin-top: 30px;
+}
+
+.camera-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.camera {
+    background: #151b23;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.camera video, .camera img {
+    width: 100%;
+}
+
+.camera-name {
+    padding: 10px;
+}
+
+/* STATUS */
+.status {
+    background: #151b23;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="logo">JCO <span>Smart</span></div>
+
+    <ul class="menu">
+        <li onclick="showSection('dashboard')">Dashboard</li>
+        <li onclick="showSection('devices')">Dispositivos</li>
+        <li onclick="showSection('cameras')">Câmeras</li>
+        <li onclick="showSection('automation')">Automações</li>
+    </ul>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="header">
+        <h1>Painel de Controle</h1>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status">
+        <strong>Status:</strong> <span id="statusText">Tudo OK</span>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+
+        <div class="grid" id="deviceGrid"></div>
+
+        <div class="cameras">
+            <h2>Câmeras</h2>
+
+            <div class="camera-grid">
+                <div class="camera">
+                    <img src="https://placehold.co/400x250/000000/FFFFFF?text=Entrada">
+                    <div class="camera-name">Entrada</div>
+                </div>
+
+                <div class="camera">
+                    <img src="https://placehold.co/400x250/000000/FFFFFF?text=Garagem">
+                    <div class="camera-name">Garagem</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DEVICES -->
+    <div id="devices" style="display:none;">
+        <h2>Dispositivos</h2>
+        <div class="grid" id="allDevices"></div>
+    </div>
+
+    <!-- CAMERAS -->
+    <div id="cameras" style="display:none;">
+        <h2>Câmeras</h2>
+
+        <div class="camera-grid">
+            <div class="camera">
+                <img src="https://placehold.co/400x250/000000/FFFFFF?text=Sala">
+                <div class="camera-name">Sala</div>
+            </div>
+
+            <div class="camera">
+                <img src="https://placehold.co/400x250/000000/FFFFFF?text=Quarto">
+                <div class="camera-name">Quarto</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTOMATION -->
+    <div id="automation" style="display:none;">
+        <h2>Automações</h2>
+        <p>Em breve...</p>
+    </div>
+
+</div>
+
+<script>
+
+let devices = [
+    { id: 1, name: "Luz Sala", status: true },
+    { id: 2, name: "Tomada TV", status: false },
+    { id: 3, name: "Luz Quarto", status: true },
+    { id: 4, name: "Ventilador", status: false }
+];
+
+function renderDevices() {
+    let grid = document.getElementById("deviceGrid");
+    let all = document.getElementById("allDevices");
+
+    grid.innerHTML = "";
+    all.innerHTML = "";
+
+    devices.forEach(device => {
+        let btnClass = device.status ? "on" : "off";
+        let text = device.status ? "ON" : "OFF";
+
+        let card = `
+            <div class="card">
+                <div class="device-name">${device.name}</div>
+                <button class="toggle ${btnClass}" onclick="toggleDevice(${device.id})">${text}</button>
+            </div>
+        `;
+
+        grid.innerHTML += card;
+        all.innerHTML += card;
+    });
+
+    updateStatus();
+}
+
+function toggleDevice(id) {
+    let device = devices.find(d => d.id === id);
+    device.status = !device.status;
+    renderDevices();
+}
+
+function updateStatus() {
+    let active = devices.filter(d => d.status).length;
+    document.getElementById("statusText").innerText =
+        active > 0 ? `${active} dispositivos ativos` : "Tudo desligado";
+}
+
+function showSection(section) {
+    ["dashboard","devices","cameras","automation"].forEach(id => {
+        document.getElementById(id).style.display = "none";
+    });
+
+    document.getElementById(section).style.display = "block";
+}
+
+renderDevices();
+
+</script>
+
+</body>
+</html>
